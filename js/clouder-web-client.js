@@ -7,7 +7,7 @@
         failure: -1
     };
 
-    const SERVER = 'http://104.198.116.231:9110';
+    const SERVER = 'http://35.190.234.235:9110';
 
     const URL = {
         login: SERVER + '/access/third/login',
