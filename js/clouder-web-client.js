@@ -351,6 +351,334 @@
                 }
             })
         },
+        getItemListByItemType: function ({itemType, pageParams}, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            let pageInfo = {
+                page: pageParams.page,
+                size: pageParams.size
+            }
+            NA_ajax({
+                type: 'GET',
+                url: URL.item + itemType + '/list',
+                dataType: 'json',
+                data: pageInfo,
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('Get item list by type successfully.');
+                        onSuccess(data)
+                    } else {
+                        alert(data.message);
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('Get item list by type error')
+                }
+            })
+        },
+        copyItem: function ({itemId, destFolderId}, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            NA_ajax({
+                type: 'POST',
+                url: URL.item + 'copy/' + itemId + '/to/' + destFolderId,
+                dataType: 'json',
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('copy item successful')
+                        onSuccess(data)
+                    } else {
+                        console.log('copy item failed')
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('copy item error')
+                }
+            })
+        },
+        deleteItem: function (itemId, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            NA_ajax({
+                type: 'POST',
+                url: URL.item + 'delete/' + itemId,
+                dataType: 'json',
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('delete item successful')
+                        onSuccess(data)
+                    } else {
+                        console.log('delete item failed')
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('delete item error')
+                }
+            })
+        },
+        downloadItem: function (itemId, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            NA_ajax({
+                type: 'GET',
+                url: URL.item + 'download/' + itemId,
+                dataType: 'json',
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('download item successful')
+                        onSuccess(data)
+                    } else {
+                        console.log('download item failed')
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('download item error')
+                }
+            })
+        },
+        getItem: function ({itemId, pageParams}, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            let pageInfo = {
+                page: pageParams.page,
+                size: pageParams.size
+            }
+            NA_ajax({
+                type: 'GET',
+                url: URL.item + 'get/' + itemId,
+                dataType: 'json',
+                data: pageInfo,
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('get item successful')
+                        onSuccess(data)
+                    } else {
+                        console.log('get item failed')
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('get item error')
+                }
+            })
+        },
+        getItemListByFolderId: function ({folderId, pageParams}, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            let pageInfo = {
+                page: pageParams.page,
+                size: pageParams.size
+            }
+            NA_ajax({
+                type: 'GET',
+                url: URL.item + 'in/' + folderId +'/list',
+                dataType: 'json',
+                data: pageInfo,
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('get item list successful')
+                        onSuccess(data)
+                    } else {
+                        console.log('get item list failed')
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('get item list error')
+                }
+            })
+        },
+        moveItem: function ({itemId, destFolderId}, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            NA_ajax({
+                type: 'POST',
+                url: URL.item + 'move/' + itemId + '/to/' + destFolderId,
+                dataType: 'json',
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('move item successful')
+                        onSuccess(data)
+                    } else {
+                        console.log('move item failed')
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('move item error')
+                }
+            })
+        },
+        previewItem: function (itemId, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            NA_ajax({
+                type: 'GET',
+                url: URL.item + 'preview/' + itemId,
+                dataType: 'json',
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('preview item successful')
+                        onSuccess(data)
+                    } else {
+                        console.log('preview item failed')
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('preview item error')
+                }
+            })
+        },
+        renameItem: function ({itemId, name}, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            NA_ajax({
+                type: 'POST',
+                url: URL.item + 'rename/' + itemId,
+                dataType: 'json',
+                query: { name:name },
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('rename item successful')
+                        onSuccess(data)
+                    } else {
+                        console.log('rename item failed')
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('rename item error')
+                }
+            })
+        },
+        shareItem: function (itemId, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            NA_ajax({
+                type: 'GET',
+                url: URL.item + 'shara/' + itemId,
+                dataType: 'json',
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('share item successful')
+                        onSuccess(data)
+                    } else {
+                        console.log('share item failed')
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('share item error')
+                }
+            })
+        },
+        uploadCheck: function ({folderId, name, size}, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            NA_ajax({
+                type: 'POST',
+                url: URL.item + 'upload/check',
+                dataType: 'json',
+                query: {
+                    folderId: folderId,
+                    name: name,
+                    size: size
+                },
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('upload check successful')
+                        onSuccess(data)
+                    } else {
+                        console.log('upload check failed')
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('upload check error')
+                }
+            })
+        },
+        /* uploadItem*/
+        fuzzSearch: function ({keyword, pageParams}, callbacks) {
+            let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}
+            let searchInfo = {
+                keyword: keyword,
+                page: pageParams.page,
+                size: pageParams.size
+            }
+            NA_ajax({
+                type: 'GET',
+                url: URL.search + 'fuzz',
+                dataType: 'json',
+                data: searchInfo,
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                },
+                success: function (data) {
+                    if (data.code === CODE.success) {
+                        console.log('fuzz search successfully.');
+                        onSuccess(data)
+                    } else {
+                        alert(data.message);
+                        onFailure(data)
+                    }
+                },
+                error: function () {
+                    console.log('fuzz search error')
+                }
+            })
+        },
         getInfo: function (callbacks) {
             let onSuccess = callbacks.onSuccess || function () {}
             let onFailure = callbacks.onFailure || function () {}
