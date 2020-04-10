@@ -148,7 +148,7 @@
                 url: URL.folder + folderId + '/content',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: pageInfo,
+                query: pageInfo,
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', globalData.token);
                 },
@@ -180,7 +180,7 @@
                 url: URL.folder + 'content/by/path',
                 dataType: 'json',
                 /*data: 'folderPath=root%2F&page=0&size=20',*/
-                data: folderInfo,
+                query: folderInfo,
                 contentType: 'application/json',
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', globalData.token);
@@ -276,9 +276,14 @@
             })
         },
         getFolderList: function (parentFolderId, callbacks) {
-            let onSuccess = callbacks.onSuccess || function () {}
-            let onFailure = callbacks.onFailure || function () {}
-            NA_ajax({
+            /* let onSuccess = callbacks.onSuccess || function () {}
+            let onFailure = callbacks.onFailure || function () {}*/
+            NAAjax.get({
+                url: URL.folder + 'list/' + parentFolderId,
+                onSuccess: callbacks.onSuccess || function () {},
+                onFailure: callbacks.onFailure || function () {}
+            })
+            /* NA_ajax({
                 type: 'GET',
                 url: URL.folder + 'list/' + parentFolderId,
                 dataType: 'json',
@@ -298,7 +303,7 @@
                 error: function () {
                     console.log('Get folder list error')
                 }
-            })
+            })*/
         },
         moveFolder: function ({folderId, destFolderId}, callbacks) {
             let onSuccess = callbacks.onSuccess || function () {}
@@ -362,7 +367,7 @@
                 type: 'GET',
                 url: URL.item + itemType + '/list',
                 dataType: 'json',
-                data: pageInfo,
+                query: pageInfo,
                 contentType: 'application/json',
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', globalData.token);
@@ -467,7 +472,7 @@
                 type: 'GET',
                 url: URL.item + 'get/' + itemId,
                 dataType: 'json',
-                data: pageInfo,
+                query: pageInfo,
                 contentType: 'application/json',
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', globalData.token);
@@ -497,7 +502,7 @@
                 type: 'GET',
                 url: URL.item + 'in/' + folderId +'/list',
                 dataType: 'json',
-                data: pageInfo,
+                query: pageInfo,
                 contentType: 'application/json',
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', globalData.token);
@@ -597,7 +602,7 @@
             let onFailure = callbacks.onFailure || function () {}
             NA_ajax({
                 type: 'GET',
-                url: URL.item + 'shara/' + itemId,
+                url: URL.item + 'share/' + itemId,
                 dataType: 'json',
                 contentType: 'application/json',
                 beforeSend: function (xhr) {
@@ -660,7 +665,7 @@
                 type: 'GET',
                 url: URL.search + 'fuzz',
                 dataType: 'json',
-                data: searchInfo,
+                query: searchInfo,
                 contentType: 'application/json',
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', globalData.token);
@@ -706,6 +711,116 @@
         },
     };
 
+    (function () {
+        'use strict';
+        let _global;
+
+        let NAAjax = {
+            get: function () {
+                /* Method 1*/
+                let onSuccess = arguments[0].onSuccess
+                let onFailure = arguments[0].onFailure
+                NA_ajax_request({
+                    type: 'GET',
+                    url: buildURL(arguments[0].url, arguments[0].query),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', globalData.token);
+                    },
+                    success: function (data) {
+                        if (data.code === CODE.success) {
+                            console.log('Get folder successfully.');
+                            onSuccess(data)
+                        } else {
+                            alert(data.message);
+                            onFailure(data)
+                        }
+                    },
+                    error: function () {
+                        console.log('Get folder error')
+                    }
+                })
+
+                /* Method 2*/
+
+                /* let xhr = createxmlHttpRequest();
+                xhr.responseType = 'json';
+                xhr.open('GET', buildURL(arguments[0].url, arguments[0].query), true);
+                if(globalData.token !== '') {
+                    xhr.setRequestHeader('Authorization', globalData.token);
+                }
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+                        if (xhr.status == 200) {
+                            arguments[0].onSuccess
+                        } else {
+                            arguments[0].onFailure
+                        }
+                    }
+                }*/
+            }
+        }
+
+        function NA_ajax_request() {
+            let ajaxData = {
+                type: arguments[0].type || 'GET',
+                url: arguments[0].url || '',
+                async: arguments[0].async || 'true',
+                data: arguments[0].data || null,
+                query: arguments[0].query || null,
+                dataType: arguments[0].dataType || 'text',
+                contentType: arguments[0].contentType || 'application/x-www-form-urlencoded',
+                beforeSend: arguments[0].beforeSend || function () {
+                },
+                success: arguments[0].success || function () {
+                },
+                error: arguments[0].error || function () {
+                }
+            };
+            let xhr = createXmlHttpRequest();
+            xhr.responseType = ajaxData.dataType;
+            ajaxData.url = buildURL(ajaxData.url, ajaxData.query)
+            xhr.open(ajaxData.type, ajaxData.url, ajaxData.async);
+            ajaxData.beforeSend(xhr)
+            xhr.setRequestHeader('Content-Type', ajaxData.contentType);
+            xhr.send(convertData(ajaxData.data));
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        ajaxData.success(xhr.response)
+                    } else {
+                        ajaxData.error(xhr.response)
+                    }
+                }
+            }
+        }
+
+        _global = (function () {
+            return this || (0, eval)('this');
+        }());
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = ClouderWebClient;
+        } else if (typeof define === 'function' && define.amd) {
+            define(function () {
+                return ClouderWebClient;
+            });
+        } else {
+            !('NAAjax' in _global) && (_global.NAAjax = NAAjax);
+        }
+    }())
+
+    /* let NA_ajax_request = {
+        get: function ({}) {
+            console.log('get')
+        },
+        post: function () {
+            console.log('post')
+        },
+    }*/
+
     function NA_ajax() {
         let ajaxData = {
             type: arguments[0].type || 'GET',
@@ -722,13 +837,9 @@
             error: arguments[0].error || function () {
             }
         };
-        let xhr = createxmlHttpRequest();
+        let xhr = createXmlHttpRequest();
         xhr.responseType = ajaxData.dataType;
-        if(ajaxData.type === 'GET') {
-            ajaxData.url = buildURL(ajaxData.url, ajaxData.data)
-        } else if(ajaxData.query !== undefined) {
-            ajaxData.url = buildURL(ajaxData.url, ajaxData.query)
-        }
+        ajaxData.url = buildURL(ajaxData.url, ajaxData.query)
         xhr.open(ajaxData.type, ajaxData.url, ajaxData.async);
         ajaxData.beforeSend(xhr)
         xhr.setRequestHeader('Content-Type', ajaxData.contentType);
@@ -744,7 +855,7 @@
         }
     }
 
-    function createxmlHttpRequest() {
+    function createXmlHttpRequest() {
         if (window.ActiveXObject) {
             return new ActiveXObject('Microsoft.XMLHTTP');
         } else if (window.XMLHttpRequest) {
