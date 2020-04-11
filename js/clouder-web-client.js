@@ -280,9 +280,7 @@
             let onFailure = callbacks.onFailure || function () {}*/
             NAAjax.get({
                 url: URL.folder + 'list/' + parentFolderId,
-                onSuccess: callbacks.onSuccess || function () {},
-                onFailure: callbacks.onFailure || function () {}
-            })
+            }).then(res=>{callbacks.onSuccess(res)},res=>{callbacks.onFailure(res)})
             /* NA_ajax({
                 type: 'GET',
                 url: URL.folder + 'list/' + parentFolderId,
@@ -717,31 +715,16 @@
 
         let NAAjax = {
             get: function () {
-                /* Method 1*/
-                let onSuccess = arguments[0].onSuccess
-                let onFailure = arguments[0].onFailure
-                NA_ajax_request({
-                    type: 'GET',
-                    url: buildURL(arguments[0].url, arguments[0].query),
-                    dataType: 'json',
-                    contentType: 'application/json',
+                let ajaxData = {
+                    url: arguments[0].url || '',
+                    query: arguments[0].query || null,
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', globalData.token);
                     },
-                    success: function (data) {
-                        if (data.code === CODE.success) {
-                            console.log('Get folder successfully.');
-                            onSuccess(data)
-                        } else {
-                            alert(data.message);
-                            onFailure(data)
-                        }
-                    },
-                    error: function () {
-                        console.log('Get folder error')
-                    }
-                })
-
+                    CODE_SUCCESS: CODE.success
+                }
+                let onSuccess = arguments[0].onSuccess
+                let onFailure = arguments[0].onFailure
                 /* Method 2*/
 
                 /* let xhr = createxmlHttpRequest();
@@ -761,6 +744,28 @@
                         }
                     }
                 }*/
+                return new Promise((resolve, reject) => {
+                    /* Method 1*/
+                    NA_ajax_request({
+                        type: 'GET',
+                        url: buildURL(ajaxData.url, ajaxData.query),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        beforeSend: ajaxData.beforeSend,
+                        success: function (data) {
+                            if (data.code === ajaxData.CODE_SUCCESS) {
+                                console.log('Get folder successfully.');
+                                resolve(data)
+                            } else {
+                                alert(data.message);
+                                reject(data)
+                            }
+                        },
+                        error: function () {
+                            console.log('Get folder error')
+                        }
+                    })
+                })
             }
         }
 
